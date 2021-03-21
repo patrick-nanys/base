@@ -26,7 +26,7 @@ public class TrainSensorTest {
             @Override
             public void setJoystickPosition(int joystickPosition) {}
         };
-        sensor = new TrainSensorImpl(controller);
+        sensor = new TrainSensorImpl(controller, null);
     }
 
     @Test
