@@ -1,13 +1,10 @@
 package hu.bme.mit.train.sensor;
 
 import hu.bme.mit.train.interfaces.TrainController;
-import hu.bme.mit.train.user.TrainUserImpl;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.internal.matchers.Null;
 
-import static org.mockito.Mockito.*;
+import static org.junit.Assert.assertEquals;
 
 public class TrainSensorTest {
 
@@ -29,17 +26,17 @@ public class TrainSensorTest {
             @Override
             public void setJoystickPosition(int joystickPosition) {}
         };
-        sensor = new TrainSensorImpl(controller, null);
+        sensor = new TrainSensorImpl(controller);
     }
 
     @Test
     public void testDefaultSensorValue() {
-        assert sensor.getSpeedLimit() == 10;
+        assertEquals(10, sensor.getSpeedLimit());
     }
 
     @Test
     public void testSettingSensorValue() {
         sensor.overrideSpeedLimit(12);
-        assert sensor.getSpeedLimit() == 12;
+        assertEquals(12, sensor.getSpeedLimit());
     }
 }
