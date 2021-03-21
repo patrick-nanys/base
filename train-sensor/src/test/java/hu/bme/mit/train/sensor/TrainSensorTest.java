@@ -1,32 +1,24 @@
 package hu.bme.mit.train.sensor;
 
 import hu.bme.mit.train.interfaces.TrainController;
+import hu.bme.mit.train.interfaces.TrainUser;
 import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.*;
 
 public class TrainSensorTest {
 
-    TrainSensorImpl sensor;
+    TrainUser user;
     TrainController controller;
+    TrainSensorImpl sensor;
 
     @Before
     public void before() {
-        controller = new TrainController() {
-            @Override
-            public void followSpeed() {}
-
-            @Override
-            public int getReferenceSpeed() { return 0; }
-
-            @Override
-            public void setSpeedLimit(int speedLimit) {}
-
-            @Override
-            public void setJoystickPosition(int joystickPosition) {}
-        };
-        sensor = new TrainSensorImpl(controller, null);
+        user = mock(TrainUser.class);
+        controller = mock(TrainController.class);
+        sensor = new TrainSensorImpl(controller, user);
     }
 
     @Test
@@ -38,5 +30,29 @@ public class TrainSensorTest {
     public void testSettingSensorValue() {
         sensor.overrideSpeedLimit(12);
         assertEquals(12, sensor.getSpeedLimit());
+    }
+
+    @Test
+    public void testSpeedLimitLessThanAbsoluteMinimum() {
+        sensor.overrideSpeedLimit(-1);
+        verify(user, times(2)).setAlarmState(true);
+    }
+
+    @Test
+    public void testSpeedLimitMoreThanAbsoluteMaximum() {
+        sensor.overrideSpeedLimit(1000);
+        verify(user, times(2)).setAlarmState(true);
+    }
+
+    @Test
+    public void testSpeedLimitDecreasesALot() {
+        sensor.overrideSpeedLimit(2);
+        verify(user, times(1)).setAlarmState(true);
+    }
+
+    @Test
+    public void testSpeedLimitIncreasesALot() {
+        sensor.overrideSpeedLimit(20);
+        verify(user, times(1)).setAlarmState(true);
     }
 }
